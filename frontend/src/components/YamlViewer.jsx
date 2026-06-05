@@ -21,9 +21,15 @@ export default function YamlViewer({ yamlText, validation }) {
   }
 
   if (!yamlText) {
-    return <div className="yaml-viewer empty">等待生成...</div>;
+    return (
+      <div className="yaml-viewer empty">
+        <div className="empty-icon">---</div>
+        <span>等待生成...</span>
+      </div>
+    );
   }
 
+  const lines = yamlText.split("\n");
   const isValid = validation?.valid;
   const errorCount = validation?.errors?.length || 0;
 
@@ -43,7 +49,14 @@ export default function YamlViewer({ yamlText, validation }) {
           <button onClick={handleDownload}>下载 .yaml</button>
         </div>
       </div>
-      <pre className="yaml-content"><code>{yamlText}</code></pre>
+      <div className="yaml-body">
+        <div className="yaml-lines">
+          {lines.map((_, i) => (
+            <span key={i} className="yaml-ln">{i + 1}</span>
+          ))}
+        </div>
+        <pre className="yaml-content"><code>{yamlText}</code></pre>
+      </div>
     </div>
   );
 }

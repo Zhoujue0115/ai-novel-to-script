@@ -10,10 +10,19 @@
 
 .yaml-viewer.empty {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   color: #666;
   font-size: 15px;
+}
+
+.empty-icon {
+  font-size: 24px;
+  color: #555;
+  font-family: monospace;
+  letter-spacing: 2px;
 }
 
 .yaml-toolbar {
@@ -28,11 +37,7 @@
   z-index: 1;
 }
 
-.yaml-toolbar h3 {
-  color: #a9b1d6;
-  font-size: 14px;
-  font-weight: 600;
-}
+.yaml-toolbar h3 { color: #a9b1d6; font-size: 14px; font-weight: 600; }
 
 .yaml-status {
   font-size: 12px;
@@ -40,22 +45,10 @@
   border-radius: 4px;
   margin-left: 8px;
 }
+.yaml-status.pass { background: rgba(39,174,96,0.2); color: #27ae60; }
+.yaml-status.fail { background: rgba(231,76,60,0.2); color: #e74c3c; }
 
-.yaml-status.pass {
-  background: rgba(39, 174, 96, 0.2);
-  color: #27ae60;
-}
-
-.yaml-status.fail {
-  background: rgba(231, 76, 60, 0.2);
-  color: #e74c3c;
-}
-
-.yaml-actions {
-  display: flex;
-  gap: 6px;
-}
-
+.yaml-actions { display: flex; gap: 6px; }
 .yaml-actions button {
   padding: 5px 12px;
   border: 1px solid #3b3d54;
@@ -67,10 +60,32 @@
   font-weight: 500;
   transition: all 0.2s;
 }
+.yaml-actions button:hover { background: #3b3d54; color: #c0caf5; }
 
-.yaml-actions button:hover {
-  background: #3b3d54;
-  color: #c0caf5;
+.yaml-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.yaml-lines {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0;
+  background: #1f2030;
+  border-right: 1px solid #2a2b3d;
+  user-select: none;
+  overflow: hidden;
+}
+
+.yaml-ln {
+  padding: 0 12px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #4a4d6a;
+  font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
+  text-align: right;
+  min-width: 48px;
 }
 
 .yaml-content {
@@ -83,4 +98,5 @@
   white-space: pre-wrap;
   word-break: break-all;
   font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
+  overflow-y: auto;
 }
