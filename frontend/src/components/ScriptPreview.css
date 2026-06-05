@@ -1,0 +1,109 @@
+.script-preview {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
+}
+
+.script-preview.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+}
+
+.script-preview h2 { margin-bottom: 12px; font-size: 18px; }
+
+.characters { margin-bottom: 16px; }
+.characters h3 { font-size: 14px; color: #666; margin-bottom: 8px; }
+
+.char-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.char-card {
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 8px 12px;
+  min-width: 120px;
+}
+
+.char-card strong { font-size: 14px; }
+
+.role-tag {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  margin-left: 6px;
+  background: #eee;
+}
+.role-tag.protagonist { background: #d5f5e3; color: #27ae60; }
+.role-tag.antagonist { background: #fadbd8; color: #c0392b; }
+.role-tag.supporting { background: #d6eaf8; color: #2980b9; }
+
+.char-card p { font-size: 12px; color: #888; margin-top: 4px; }
+
+.scenes h3 { font-size: 14px; color: #666; margin-bottom: 8px; }
+
+.scene-card {
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.scene-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.scene-id {
+  background: #1a1a2e;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.scene-location { font-size: 12px; color: #999; margin-left: auto; }
+
+.scene-summary { font-size: 13px; color: #666; margin-bottom: 8px; }
+
+.beats { display: flex; flex-direction: column; gap: 4px; }
+
+.beat {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 13px;
+}
+
+.beat-type {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  min-width: 36px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.beat-narration .beat-type { background: #e8daef; color: #7d3c98; }
+.beat-dialogue .beat-type { background: #d5f5e3; color: #27ae60; }
+.beat-action .beat-type { background: #d6eaf8; color: #2980b9; }
+.beat-inner_monologue .beat-type { background: #fdebd0; color: #e67e22; }
+.beat-stage_direction .beat-type { background: #f5f5f5; color: #888; }
+
+.beat-char {
+  color: #1a1a2e;
+  font-weight: 600;
+  min-width: 36px;
+  flex-shrink: 0;
+}
+
+.beat-content { flex: 1; }

@@ -1,0 +1,51 @@
+.yaml-viewer {
+  background: #1e1e1e;
+  border-radius: 8px;
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
+}
+
+.yaml-viewer.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+}
+
+.yaml-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid #333;
+  position: sticky;
+  top: 0;
+  background: #1e1e1e;
+}
+
+.yaml-toolbar h3 {
+  color: #ccc;
+  font-size: 14px;
+}
+
+.yaml-actions { display: flex; gap: 6px; }
+
+.yaml-actions button {
+  padding: 4px 10px;
+  border: 1px solid #555;
+  background: transparent;
+  color: #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.yaml-content {
+  padding: 12px;
+  margin: 0;
+  color: #d4d4d4;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
