@@ -167,11 +167,6 @@ AI 小说转剧本工具是一款面向小说作者和内容创作者的 AI 辅�
 {
   "success": true,
   "yaml_text": "title: ...",
-  "structured_script": {
-    "title": "剧本标题",
-    "characters": [],
-    "scenes": []
-  },
   "validation": {
     "valid": true,
     "errors": []
@@ -207,6 +202,6 @@ AI 小说转剧本工具是一款面向小说作者和内容创作者的 AI 辅�
 2. 后端接收请求并进行输入校验
 3. 系统调用大模型生成 YAML 格式剧本初稿
 4. 后端对生成结果进行 YAML 格式校验
-5. 返回 YAML 文本和结构化剧本 JSON 给前端
+5. 返回 YAML 文本和校验结果给前端（前端 js-yaml 解析用于预览）
 6. 前端展示 YAML 文本和剧本预览
 7. 支持复制和导出 YAML 文件

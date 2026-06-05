@@ -9,6 +9,5 @@ class ValidationResult(BaseModel):
 class GenerateScriptResponse(BaseModel):
     success: bool
     yaml_text: str = ""
-    structured_script: dict = {}
     validation: ValidationResult = ValidationResult(valid=True, errors=[])
     message: str = ""

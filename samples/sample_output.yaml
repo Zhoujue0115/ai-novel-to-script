@@ -1,0 +1,159 @@
+title: "雨夜重逢"
+metadata:
+  schema_version: "1.0"
+  genre: "都市情感"
+  style: "screenplay"
+  language: "zh-CN"
+  generated_by: "AI Novel to Script"
+
+source_chapters:
+  - index: 1
+    title: "雨夜归人"
+    summary: "林夏三年后回到城市，在咖啡馆独自等待"
+  - index: 2
+    title: "旧事浮现"
+    summary: "周言出现，两人重逢并回忆起过去"
+  - index: 3
+    title: "迟到的解释"
+    summary: "林夏解释三年前离开的原因，周言表示理解"
+
+characters:
+  - id: "c1"
+    name: "林夏"
+    role: "protagonist"
+    description: "三年前离开城市，如今归来的女性，曾经历失业和父亲病重"
+    traits: ["敏感", "自卑", "内疚"]
+    relationships:
+      - target: "c2"
+        relation: "前恋人，因现实压力离开"
+  - id: "c2"
+    name: "周言"
+    role: "supporting"
+    description: "林夏的前男友，三年来未离开城市，常去咖啡馆"
+    traits: ["沉稳", "深情", "执着"]
+    relationships:
+      - target: "c1"
+        relation: "前恋人，始终未忘"
+
+settings:
+  era: "现代"
+  locations:
+    - id: "l1"
+      name: "火车站出口"
+      description: "雨夜中的车站，街灯昏黄"
+    - id: "l2"
+      name: "老街咖啡馆"
+      description: "安静的小咖啡馆，只有几盏灯亮着，爵士乐悠然"
+
+scenes:
+  - scene_id: "s1"
+    title: "雨夜归城"
+    chapter_refs: [1]
+    location: "火车站出口"
+    time: "夜晚，飘着细雨"
+    summary: "林夏拖着行李箱走出车站，感受到雨夜的寒冷"
+    characters_in_scene: ["c1"]
+    beats:
+      - type: "action"
+        character: "c1"
+        content: "林夏拖着行李箱走出车站，抬手遮雨"
+      - type: "narration"
+        content: "天空飘着细雨，街灯在水雾中晕开昏黄的光"
+      - type: "action"
+        character: "c1"
+        content: "她快步拐进老街尽头的那家咖啡馆"
+
+  - scene_id: "s2"
+    title: "咖啡馆独坐"
+    chapter_refs: [1]
+    location: "老街咖啡馆"
+    time: "夜晚"
+    summary: "林夏在咖啡馆靠窗座位喝咖啡，望着窗外"
+    characters_in_scene: ["c1"]
+    beats:
+      - type: "action"
+        character: "c1"
+        content: "林夏点了一杯热美式，在靠窗的位置坐下"
+      - type: "narration"
+        content: "咖啡馆里只亮着几盏灯，没有别的客人"
+      - type: "action"
+        character: "c1"
+        content: "她望着窗外，雨水顺着玻璃窗滑下来，把街景切割成模糊的碎片"
+
+  - scene_id: "s3"
+    title: "旧人重逢"
+    chapter_refs: [2]
+    location: "老街咖啡馆"
+    time: "夜晚"
+    summary: "周言推开咖啡馆门，与林夏重逢"
+    characters_in_scene: ["c1", "c2"]
+    beats:
+      - type: "action"
+        character: "c2"
+        content: "咖啡馆的门被推开"
+      - type: "dialogue"
+        character: "c2"
+        content: "好久不见。"
+      - type: "action"
+        character: "c1"
+        content: "林夏抬起头，看见了周言"
+      - type: "narration"
+        content: "他和三年前没有太大变化，只是眉宇间多了几分沉稳"
+      - type: "action"
+        character: "c1"
+        content: "林夏的手指不自觉收紧了杯柄，心跳漏了一拍"
+      - type: "dialogue"
+        character: "c1"
+        content: "我没想到会在这里遇见你。"
+      - type: "stage_direction"
+        content: "林夏的声音有些发干"
+      - type: "action"
+        character: "c2"
+        content: "周言在她对面坐下"
+      - type: "dialogue"
+        character: "c2"
+        content: "我经常来这里。这三年，一直没有变。"
+      - type: "action"
+        character: "c2"
+        content: "他望向窗外，目光像是穿越了雨幕，落回过去"
+
+  - scene_id: "s4"
+    title: "迟到的解释"
+    chapter_refs: [3]
+    location: "老街咖啡馆"
+    time: "夜晚"
+    summary: "林夏解释三年前离开的原因，周言给予安慰"
+    characters_in_scene: ["c1", "c2"]
+    beats:
+      - type: "dialogue"
+        character: "c2"
+        content: "三年前你为什么要走？"
+      - type: "stage_direction"
+        content: "周言的声音很轻，但问题却重重地砸在林夏心上"
+      - type: "action"
+        character: "c1"
+        content: "林夏低下头，咖啡的热气模糊了她的视线"
+      - type: "dialogue"
+        character: "c1"
+        content: "那时候我觉得自己配不上你。我刚丢了工作，父亲又病重……我不想拖累你。"
+      - type: "action"
+        character: "c1"
+        content: "她深吸一口气，眼角有些湿润"
+      - type: "dialogue"
+        character: "c1"
+        content: "我知道这样说很自私。但当时我真的不知道该怎么办。"
+      - type: "action"
+        character: "c2"
+        content: "周言没有说话，他把手伸过桌面，轻轻覆住了她的手"
+      - type: "narration"
+        content: "咖啡馆里的爵士乐悠然地流淌着，雨还在下，但好像不再那么冷了"
+
+adaptation_notes:
+  omitted_plots: []
+  merged_scenes:
+    - "将第1章中林夏从车站到咖啡馆的过程合并为一个场景s1"
+    - "将第2章中周言出现与对话合并为场景s3"
+    - "将第3章中解释与和解合并为场景s4"
+  suggestions:
+    - "可以增加林夏离开城市前的闪回镜头，丰富动机"
+    - "咖啡馆的爵士乐可以作为背景音贯穿始终，增强氛围"

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import "./NovelInput.css";
 
 export default function NovelInput({ onGenerate, loading }) {
