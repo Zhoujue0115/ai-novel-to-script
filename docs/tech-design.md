@@ -42,8 +42,8 @@
 ```bash
 # .env
 LLM_API_KEY=your-api-key
-LLM_API_BASE=https://api.openai.com/v1
-LLM_MODEL=gpt-4o
+LLM_API_BASE=https://api.deepseek.com/v1
+LLM_MODEL=deepseek-chat
 ```
 
 ## 2. 系统架构
@@ -234,7 +234,7 @@ Prompt 需要明确约束模型输出：
 不要输出 Markdown 代码块。
 必须包含 title、source_chapters、characters、scenes。
 scenes 中必须包含 beats。
-beats 的 type 只能是 narration、dialogue、action、stage_direction。
+beats 的 type 只能是 narration、dialogue、action、inner_monologue、stage_direction。
 对白类型必须包含 character 字段。
 每个场景必须包含 chapter_refs。
 ### 5.2 后处理策略

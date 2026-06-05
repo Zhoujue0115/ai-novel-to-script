@@ -46,22 +46,24 @@ ai-novel-to-script/
 ├── prompts/
 ├── samples/
 └── README.md
+```
 
 ## 前置依赖
 
 - Python 3.10+
 - Node.js 18+
-- 大模型 API Key（OpenAI / Claude / 其他兼容接口）
+- 大模型 API Key（DeepSeek / OpenAI / 其他兼容接口）
 
 ## 快速启动
 
 ```bash
 # 后端
 cd backend
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+python -m venv .venv
+.venv\Scripts\activate        # Windows CMD
+# source .venv/Scripts/activate   # Git Bash
 pip install fastapi uvicorn pydantic pyyaml python-dotenv
-cp .env.example .env  # 编辑 .env 填入 API Key
+cp .env.example .env          # 编辑 .env 填入 API Key
 uvicorn app.main:app --reload
 
 # 前端
