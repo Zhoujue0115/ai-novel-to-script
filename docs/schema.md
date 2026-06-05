@@ -49,6 +49,7 @@ title: "雨夜重逢"
 ### 3.2 metadata
 
 metadata:
+  schema_version: "1.0"
   genre: "都市情感"
   style: "screenplay"
   language: "zh-CN"
@@ -59,6 +60,7 @@ metadata:
 字段：
 
 字段	类型	说明
+schema_version	string	Schema 版本号，用于兼容升级
 genre	string	题材类型
 style	string	剧本类型，如 screenplay、stage_play
 language	string	语言
@@ -181,6 +183,8 @@ beats	array	是	场景内容块
 
 剧本通常以场景为基本结构。将内容拆成 scenes，可以让作者逐场修改，也方便后续进行局部重生成。
 
+> **关于 `location` 与 `settings.locations` 的关系**：`scene.location` 为自由文本，直接填写地点名称（如 "旧城咖啡馆"）。`settings.locations` 为可选的地点汇总表，提供 `id` 和 `description` 等附加信息。两者通过**名称匹配**关联，不做 ID 强引用，以降低 AI 生成难度和人工编辑成本。
+
 ### 3.7 beats
 beats 是每个场景中的最小内容块。
 
@@ -201,6 +205,7 @@ type 可选值：
 narration	旁白
 dialogue	对白
 action	动作
+inner_monologue	内心独白
 stage_direction	舞台或镜头提示
 设计原因：
 
@@ -226,6 +231,7 @@ adaptation_notes:
 
 title: "雨夜重逢"
 metadata:
+  schema_version: "1.0"
   genre: "都市情感"
   style: "screenplay"
   language: "zh-CN"
@@ -316,7 +322,7 @@ adaptation_notes:
 characters 字段用于集中管理角色信息，避免在不同场景中出现角色名称不一致的问题。
 
 ### 5.4 区分内容类型
-beats 中的 type 字段用于区分 narration、dialogue、action 和 stage_direction，使输出更接近真实剧本结构。
+beats 中的 type 字段用于区分 narration、dialogue、action、inner_monologue 和 stage_direction，使输出更接近真实剧本结构。
 
 ### 5.5 便于后续编辑和扩展
 YAML 结构可读性较强，适合作者直接编辑。同时该结构也可以被程序解析，用于后续实现剧本预览、格式校验、导出和局部重生成。

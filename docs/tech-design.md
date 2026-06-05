@@ -16,6 +16,8 @@
 | python-dotenv | 管理环境变量 |
 | 大模型 API | 小说理解与剧本生成 |
 
+前后端分离架构下，FastAPI 需配置 CORS 中间件以允许前端跨域请求。
+
 ### 1.2 前端技术栈
 
 | 技术 | 用途 |
@@ -32,6 +34,17 @@
 | Markdown | 编写 PRD、Schema 和技术文档 |
 | Git | 版本管理 |
 | GitHub / Gitee | 代码仓库和 PR 管理 |
+
+### 1.4 环境变量
+
+后端通过 `.env` 文件管理敏感配置，不提交到 Git 仓库：
+
+```bash
+# .env
+LLM_API_KEY=your-api-key
+LLM_API_BASE=https://api.openai.com/v1
+LLM_MODEL=gpt-4o
+```
 
 ## 2. 系统架构
 
@@ -249,17 +262,30 @@ beats 的 type 只能是 narration、dialogue、action、stage_direction。
   "success": false,
   "message": "AI 生成失败，请稍后重试"
 }
-### 6.3 YAML 格式错误
+### 6.3 模型调用超时
+
+当大模型 API 调用超时时，返回：
+
+```json
+{
+  "success": false,
+  "message": "AI 生成超时，请稍后重试"
+}
+```
+
+建议设置 API 调用超时时间为 120 秒。
+
+### 6.4 YAML 格式错误
 当生成内容无法解析为 YAML 时，返回：
 
-n
+
 {
   "valid": false,
   "errors": [
     "生成结果不是合法 YAML"
   ]
 }
-### 6.4 必要字段缺失
+### 6.5 必要字段缺失
 当 YAML 缺少必要字段时，返回：
 
 
@@ -270,7 +296,31 @@ n
     "缺少 scenes 字段"
   ]
 }
-## 7. 后续扩展方向
+## 8. 当前阶段实现优先级
+
+### P0（第一阶段，必须完成）
+
+- FastAPI 项目骨架搭建
+- `/health` 健康检查接口
+- `/api/script/generate` 占位接口
+- 请求/响应 Pydantic 模型
+- YAML 校验基础能力
+
+### P1（第二阶段，核心能力）
+
+- 大模型 API 接入
+- Prompt 构建与调用
+- YAML 剧本生成与后处理
+- 前端输入页面与 YAML 展示
+
+### P2（第三阶段，体验增强）
+
+- 剧本预览渲染
+- YAML 导出下载
+- 局部场景重新生成
+- 历史记录与多版本对比
+
+## 9. 后续扩展方向
 后续可以继续扩展：
 
 支持局部场景重新生成。
