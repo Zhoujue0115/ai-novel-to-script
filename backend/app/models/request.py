@@ -18,3 +18,7 @@ class GenerateScriptRequest(BaseModel):
         if len(v) < 3:
             raise ValueError("至少需要输入 3 个章节")
         return v
+
+
+class ValidateScriptRequest(BaseModel):
+    yaml_text: str = Field(min_length=1, description="待校验的 YAML 文本")

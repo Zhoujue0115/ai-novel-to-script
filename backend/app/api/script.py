@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from ..models.request import GenerateScriptRequest
+from ..models.request import GenerateScriptRequest, ValidateScriptRequest
 from ..models.response import GenerateScriptResponse, ValidationResult
 from ..services.yaml_validator import validate_yaml
 
@@ -19,5 +19,5 @@ def generate_script(req: GenerateScriptRequest):
 
 
 @router.post("/validate", response_model=ValidationResult)
-def validate_script(yaml_text: str):
-    return validate_yaml(yaml_text)
+def validate_script(req: ValidateScriptRequest):
+    return validate_yaml(req.yaml_text)
