@@ -1,3 +1,4 @@
+import React from "react";
 import jsYaml from "js-yaml";
 import "./ScriptPreview.css";
 

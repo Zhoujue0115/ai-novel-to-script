@@ -1,109 +1,198 @@
 .script-preview {
   background: #fff;
-  border-radius: 8px;
-  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  padding: 20px;
   overflow-y: auto;
-  max-height: calc(100vh - 120px);
+  max-height: calc(100vh - 114px);
 }
 
 .script-preview.empty {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #aaa;
+  color: #bdc3c7;
+  font-size: 15px;
 }
 
-.script-preview h2 { margin-bottom: 12px; font-size: 18px; }
+.script-preview h2 {
+  margin-bottom: 16px;
+  font-size: 20px;
+  color: #1a1a2e;
+}
 
-.characters { margin-bottom: 16px; }
-.characters h3 { font-size: 14px; color: #666; margin-bottom: 8px; }
+/* Characters */
+.characters {
+  margin-bottom: 20px;
+}
 
-.char-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.characters h3 {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin-bottom: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.char-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 
 .char-card {
-  background: #f9f9f9;
+  background: #f8f9fa;
   border: 1px solid #eee;
-  border-radius: 6px;
-  padding: 8px 12px;
-  min-width: 120px;
+  border-radius: 10px;
+  padding: 10px 14px;
+  min-width: 140px;
+  transition: box-shadow 0.2s;
 }
 
-.char-card strong { font-size: 14px; }
+.char-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.char-card strong {
+  font-size: 15px;
+  color: #1a1a2e;
+}
 
 .role-tag {
   display: inline-block;
-  padding: 1px 6px;
-  border-radius: 3px;
+  padding: 2px 8px;
+  border-radius: 4px;
   font-size: 11px;
-  margin-left: 6px;
-  background: #eee;
+  margin-left: 8px;
+  font-weight: 500;
 }
-.role-tag.protagonist { background: #d5f5e3; color: #27ae60; }
-.role-tag.antagonist { background: #fadbd8; color: #c0392b; }
-.role-tag.supporting { background: #d6eaf8; color: #2980b9; }
 
-.char-card p { font-size: 12px; color: #888; margin-top: 4px; }
+.role-tag.protagonist { background: #d5f5e3; color: #1e8449; }
+.role-tag.antagonist  { background: #fadbd8; color: #c0392b; }
+.role-tag.supporting  { background: #d6eaf8; color: #2471a3; }
 
-.scenes h3 { font-size: 14px; color: #666; margin-bottom: 8px; }
+.char-card p {
+  font-size: 12px;
+  color: #95a5a6;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+/* Scenes */
+.scenes h3 {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin-bottom: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 
 .scene-card {
   border: 1px solid #eee;
-  border-radius: 6px;
-  padding: 12px;
-  margin-bottom: 12px;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 14px;
+  background: #fafbfc;
+  transition: box-shadow 0.2s;
+}
+
+.scene-card:hover {
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
 
 .scene-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
 }
 
 .scene-id {
-  background: #1a1a2e;
+  background: linear-gradient(135deg, #0f0c29, #302b63);
   color: #fff;
-  padding: 2px 8px;
-  border-radius: 3px;
-  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
-.scene-location { font-size: 12px; color: #999; margin-left: auto; }
+.scene-header strong {
+  font-size: 15px;
+  color: #1a1a2e;
+}
 
-.scene-summary { font-size: 13px; color: #666; margin-bottom: 8px; }
+.scene-location {
+  font-size: 12px;
+  color: #95a5a6;
+  margin-left: auto;
+  background: #f0f0f0;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
 
-.beats { display: flex; flex-direction: column; gap: 4px; }
+.scene-summary {
+  font-size: 13px;
+  color: #7f8c8d;
+  margin-bottom: 10px;
+  padding-left: 4px;
+  border-left: 3px solid #302b63;
+  padding: 6px 10px;
+  background: #f5f5fa;
+  border-radius: 0 6px 6px 0;
+}
+
+/* Beats */
+.beats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 
 .beat {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  padding: 6px 0;
-  border-bottom: 1px solid #f5f5f5;
-  font-size: 13px;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+  line-height: 1.6;
+  transition: background 0.15s;
+}
+
+.beat:hover {
+  background: #fafbfc;
 }
 
 .beat-type {
   display: inline-block;
-  padding: 1px 6px;
-  border-radius: 3px;
+  padding: 2px 8px;
+  border-radius: 4px;
   font-size: 11px;
+  font-weight: 600;
   min-width: 36px;
   text-align: center;
   flex-shrink: 0;
+  letter-spacing: 0.5px;
 }
 
-.beat-narration .beat-type { background: #e8daef; color: #7d3c98; }
-.beat-dialogue .beat-type { background: #d5f5e3; color: #27ae60; }
-.beat-action .beat-type { background: #d6eaf8; color: #2980b9; }
-.beat-inner_monologue .beat-type { background: #fdebd0; color: #e67e22; }
-.beat-stage_direction .beat-type { background: #f5f5f5; color: #888; }
+.beat-narration .beat-type       { background: #e8daef; color: #6c3483; }
+.beat-dialogue .beat-type        { background: #d5f5e3; color: #1e8449; }
+.beat-action .beat-type          { background: #d6eaf8; color: #2471a3; }
+.beat-inner_monologue .beat-type { background: #fdebd0; color: #b9770e; }
+.beat-stage_direction .beat-type { background: #f2f3f4; color: #7f8c8d; }
 
 .beat-char {
-  color: #1a1a2e;
-  font-weight: 600;
-  min-width: 36px;
+  color: #302b63;
+  font-weight: 700;
+  min-width: 40px;
   flex-shrink: 0;
+  font-size: 13px;
 }
 
-.beat-content { flex: 1; }
+.beat-content {
+  flex: 1;
+}

@@ -1,8 +1,13 @@
+import React, { useState } from "react";
 import "./YamlViewer.css";
 
-export default function YamlViewer({ yamlText }) {
+export default function YamlViewer({ yamlText, validation }) {
+  const [copied, setCopied] = useState(false);
+
   function handleCopy() {
     navigator.clipboard.writeText(yamlText);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   }
 
   function handleDownload() {
@@ -19,12 +24,22 @@ export default function YamlViewer({ yamlText }) {
     return <div className="yaml-viewer empty">等待生成...</div>;
   }
 
+  const isValid = validation?.valid;
+  const errorCount = validation?.errors?.length || 0;
+
   return (
     <div className="yaml-viewer">
       <div className="yaml-toolbar">
-        <h3>YAML 输出</h3>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <h3>YAML 输出</h3>
+          {validation && (
+            <span className={`yaml-status ${isValid ? "pass" : "fail"}`}>
+              {isValid ? "校验通过" : `${errorCount} 个问题`}
+            </span>
+          )}
+        </div>
         <div className="yaml-actions">
-          <button onClick={handleCopy}>复制</button>
+          <button onClick={handleCopy}>{copied ? "已复制" : "复制"}</button>
           <button onClick={handleDownload}>下载 .yaml</button>
         </div>
       </div>

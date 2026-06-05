@@ -1,86 +1,173 @@
 .novel-input {
   background: #fff;
-  border-radius: 8px;
-  padding: 16px;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   overflow-y: auto;
-  max-height: calc(100vh - 120px);
+  max-height: calc(100vh - 114px);
 }
 
-.novel-input h2 { margin-bottom: 12px; font-size: 16px; }
+.novel-input h2 {
+  margin-bottom: 16px;
+  font-size: 17px;
+  color: #1a1a2e;
+}
 
-.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
-.field span { font-size: 13px; color: #666; }
-.field input { padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif; }
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.field span {
+  font-size: 13px;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.field input {
+  padding: 10px 12px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: #302b63;
+  box-shadow: 0 0 0 3px rgba(48, 43, 99, 0.1);
+}
 
 .chapters-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   font-size: 13px;
-  color: #666;
+  color: #7f8c8d;
+  font-weight: 500;
 }
 
 .chapters-header button {
-  padding: 4px 12px;
-  border: 1px solid #1a1a2e;
+  padding: 5px 14px;
+  border: 1.5px solid #302b63;
   background: #fff;
-  color: #1a1a2e;
-  border-radius: 4px;
+  color: #302b63;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.chapters-header button:hover {
+  background: #302b63;
+  color: #fff;
 }
 
 .chapter-card {
-  border: 1px solid #eee;
-  border-radius: 6px;
-  padding: 10px;
-  margin-bottom: 8px;
+  border: 1.5px solid #eee;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: #fafbfc;
+  transition: border-color 0.2s;
+}
+
+.chapter-card:focus-within {
+  border-color: #302b63;
 }
 
 .chapter-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   font-size: 13px;
   font-weight: 600;
+  color: #555;
 }
 
-.btn-remove { background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 12px; }
+.btn-remove {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  cursor: pointer;
+  font-size: 12px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.btn-remove:hover { opacity: 1; }
 
 .chapter-card input {
   width: 100%;
-  padding: 6px 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 8px 10px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 6px;
   font-size: 14px;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+  transition: border-color 0.2s;
+}
+
+.chapter-card input:focus {
+  outline: none;
+  border-color: #302b63;
 }
 
 .chapter-card textarea {
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 10px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 6px;
   font-size: 14px;
   line-height: 1.8;
   resize: vertical;
   font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+  transition: border-color 0.2s;
 }
 
-.hint { color: #e74c3c; font-size: 13px; margin-top: 8px; }
+.chapter-card textarea:focus {
+  outline: none;
+  border-color: #302b63;
+}
+
+.hint {
+  color: #e74c3c;
+  font-size: 13px;
+  margin-top: 8px;
+}
 
 .btn-generate {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   border: none;
-  border-radius: 6px;
-  background: #1a1a2e;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0f0c29, #302b63);
   color: #fff;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  margin-top: 8px;
+  margin-top: 10px;
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+  box-shadow: 0 4px 14px rgba(48, 43, 99, 0.3);
 }
-.btn-generate:disabled { background: #ccc; cursor: not-allowed; }
+
+.btn-generate:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(48, 43, 99, 0.4);
+}
+
+.btn-generate:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-generate:disabled {
+  background: linear-gradient(135deg, #bdc3c7, #95a5a6);
+  box-shadow: none;
+  cursor: not-allowed;
+}

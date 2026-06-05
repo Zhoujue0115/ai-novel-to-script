@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import NovelInput from "./components/NovelInput";
 import YamlViewer from "./components/YamlViewer";
 import ScriptPreview from "./components/ScriptPreview";
@@ -6,13 +6,17 @@ import { generateScript } from "./api";
 
 export default function App() {
   const [yamlText, setYamlText] = useState("");
+  const [validation, setValidation] = useState(null);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleGenerate({ title, chapters }) {
     setLoading(true);
     setError("");
+    setSuccess("");
     setYamlText("");
+    setValidation(null);
 
     try {
       const { data } = await generateScript(title, chapters);
@@ -21,7 +25,11 @@ export default function App() {
         return;
       }
       setYamlText(data.yaml_text);
-      if (!data.validation.valid) {
+      setValidation(data.validation);
+      if (data.validation?.valid) {
+        setSuccess("剧本生成成功，校验通过");
+      }
+      if (!data.validation?.valid) {
         setError("校验警告: " + data.validation.errors.join(", "));
       }
     } catch (e) {
@@ -40,11 +48,12 @@ export default function App() {
 
       <main className="app-main">
         <NovelInput onGenerate={handleGenerate} loading={loading} />
-        <YamlViewer yamlText={yamlText} />
+        <YamlViewer yamlText={yamlText} validation={validation} />
         <ScriptPreview yamlText={yamlText} />
       </main>
 
       {error && <div className="error-toast">{error}</div>}
+      {success && <div className="success-toast">{success}</div>}
     </div>
   );
 }

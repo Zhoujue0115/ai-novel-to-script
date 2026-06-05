@@ -25,7 +25,7 @@
 | React / Vite | 构建单页应用 |
 | Axios | 调用后端 API |
 | js-yaml | 前端 YAML 解析和预览 |
-| CSS / Tailwind CSS | 页面样式 |
+| CSS | 页面样式 |
 
 ### 1.3 文档与工程工具
 
@@ -99,14 +99,9 @@ ScriptPreview
 展示角色列表
 展示场景列表
 展示对白、动作和旁白
-GenerateButton
-负责触发生成流程并展示加载状态。
 
-功能：
+生成按钮（集成在 NovelInput 中，含 loading 状态和错误 toast）
 
-请求后端 API
-展示生成中状态
-处理错误提示
 ### 3.2 后端模块
 API 路由模块
 负责定义 HTTP 接口。
@@ -124,6 +119,7 @@ GET /health
 ChapterInput
 GenerateScriptRequest
 GenerateScriptResponse
+ValidateScriptRequest
 ValidationResult
 章节解析模块
 负责处理输入章节。
@@ -298,7 +294,7 @@ beats 的 type 只能是 narration、dialogue、action、inner_monologue、stage
 }
 ## 8. 当前阶段实现优先级
 
-### P0（第一阶段，必须完成）
+### P0（第一阶段）✅ 已完成
 
 - FastAPI 项目骨架搭建
 - `/health` 健康检查接口
@@ -306,19 +302,21 @@ beats 的 type 只能是 narration、dialogue、action、inner_monologue、stage
 - 请求/响应 Pydantic 模型
 - YAML 校验基础能力
 
-### P1（第二阶段，核心能力）
+### P1（第二阶段）✅ 已完成
 
-- 大模型 API 接入
+- DeepSeek API 接入（urllib，零额外依赖）
 - Prompt 构建与调用
 - YAML 剧本生成与后处理
-- 前端输入页面与 YAML 展示
+- 日志 + 异常处理 + 单元测试（11 cases）
 
-### P2（第三阶段，体验增强）
+### P2（第三阶段）✅ 已完成
 
-- 剧本预览渲染
-- YAML 导出下载
-- 局部场景重新生成
-- 历史记录与多版本对比
+- 前端三栏页面（NovelInput / YamlViewer / ScriptPreview）
+- YAML 展示 + 复制 + 下载
+- 剧本预览渲染（角色卡片 + 场景 beats 彩色标签）
+- UI 美化（渐变/阴影/动画/响应式）
+- 校验状态实时显示
+- 样例输入输出（samples/）
 
 ## 9. 后续扩展方向
 后续可以继续扩展：
