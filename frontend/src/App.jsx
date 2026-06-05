@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import Cover from "./components/Cover";
 import NovelInput from "./components/NovelInput";
 import YamlViewer from "./components/YamlViewer";
 import ScriptPreview from "./components/ScriptPreview";
 import { generateScript } from "./api";
 
 export default function App() {
+  const [showCover, setShowCover] = useState(true);
   const [yamlText, setYamlText] = useState("");
   const [validation, setValidation] = useState(null);
   const [error, setError] = useState("");
@@ -37,6 +39,10 @@ export default function App() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (showCover) {
+    return <Cover onEnter={() => setShowCover(false)} />;
   }
 
   return (
