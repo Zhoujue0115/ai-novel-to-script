@@ -7,25 +7,38 @@
   max-height: calc(100vh - 114px);
 }
 
-.novel-input h2 {
+.input-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 16px;
+}
+
+.input-header h2 {
   font-size: 17px;
   color: #1a1a2e;
+  margin: 0;
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 14px;
-}
-
-.field span {
-  font-size: 13px;
-  color: #7f8c8d;
+.btn-sample {
+  padding: 5px 14px;
+  border: 1.5px dashed #302b63;
+  background: transparent;
+  color: #302b63;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
   font-weight: 500;
+  transition: all 0.2s;
 }
 
+.btn-sample:hover {
+  background: #f5f5fa;
+  border-style: solid;
+}
+
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+.field span { font-size: 13px; color: #7f8c8d; font-weight: 500; }
 .field input {
   padding: 10px 12px;
   border: 1.5px solid #e0e0e0;
@@ -34,12 +47,7 @@
   font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-
-.field input:focus {
-  outline: none;
-  border-color: #302b63;
-  box-shadow: 0 0 0 3px rgba(48, 43, 99, 0.1);
-}
+.field input:focus { outline: none; border-color: #302b63; box-shadow: 0 0 0 3px rgba(48, 43, 99, 0.1); }
 
 .chapters-header {
   display: flex;
@@ -62,11 +70,7 @@
   font-weight: 600;
   transition: all 0.2s;
 }
-
-.chapters-header button:hover {
-  background: #302b63;
-  color: #fff;
-}
+.chapters-header button:hover { background: #302b63; color: #fff; }
 
 .chapter-card {
   border: 1.5px solid #eee;
@@ -76,10 +80,7 @@
   background: #fafbfc;
   transition: border-color 0.2s;
 }
-
-.chapter-card:focus-within {
-  border-color: #302b63;
-}
+.chapter-card:focus-within { border-color: #302b63; }
 
 .chapter-header {
   display: flex;
@@ -91,16 +92,7 @@
   color: #555;
 }
 
-.btn-remove {
-  background: none;
-  border: none;
-  color: #e74c3c;
-  cursor: pointer;
-  font-size: 12px;
-  opacity: 0.6;
-  transition: opacity 0.2s;
-}
-
+.btn-remove { background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 12px; opacity: 0.6; transition: opacity 0.2s; }
 .btn-remove:hover { opacity: 1; }
 
 .chapter-card input {
@@ -113,11 +105,7 @@
   font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
   transition: border-color 0.2s;
 }
-
-.chapter-card input:focus {
-  outline: none;
-  border-color: #302b63;
-}
+.chapter-card input:focus { outline: none; border-color: #302b63; }
 
 .chapter-card textarea {
   width: 100%;
@@ -130,18 +118,11 @@
   font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
   transition: border-color 0.2s;
 }
+.chapter-card textarea:focus { outline: none; border-color: #302b63; }
 
-.chapter-card textarea:focus {
-  outline: none;
-  border-color: #302b63;
-}
+.hint { color: #e74c3c; font-size: 13px; margin-top: 8px; }
 
-.hint {
-  color: #e74c3c;
-  font-size: 13px;
-  margin-top: 8px;
-}
-
+/* Generate button + spinner */
 .btn-generate {
   width: 100%;
   padding: 14px;
@@ -153,21 +134,26 @@
   font-weight: 600;
   cursor: pointer;
   margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
   box-shadow: 0 4px 14px rgba(48, 43, 99, 0.3);
 }
+.btn-generate:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(48, 43, 99, 0.4); }
+.btn-generate:active:not(:disabled) { transform: translateY(0); }
+.btn-generate:disabled { background: linear-gradient(135deg, #bdc3c7, #95a5a6); box-shadow: none; cursor: not-allowed; }
 
-.btn-generate:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(48, 43, 99, 0.4);
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
 }
 
-.btn-generate:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.btn-generate:disabled {
-  background: linear-gradient(135deg, #bdc3c7, #95a5a6);
-  box-shadow: none;
-  cursor: not-allowed;
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
