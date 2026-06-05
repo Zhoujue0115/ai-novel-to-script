@@ -20,6 +20,8 @@
   margin: 0;
 }
 
+.input-actions { display: flex; gap: 6px; }
+
 .btn-sample {
   padding: 5px 14px;
   border: 1.5px dashed #302b63;

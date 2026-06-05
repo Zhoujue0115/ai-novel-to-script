@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./NovelInput.css";
 
 const SAMPLE = {
@@ -17,6 +17,64 @@ export default function NovelInput({ onGenerate, loading }) {
     { index: 2, title: "", content: "" },
     { index: 3, title: "", content: "" },
   ]);
+  const fileRef = useRef(null);
+
+  function parseChapters(text) {
+    text = text.replace(/\r\n/g, "\n").trim();
+    // 匹配 "第X章" "第X回" "Chapter X" 等
+    const patterns = [
+      /^(第[一二三四五六七八九十百千0-9]+[章回节卷])[：:\s]*(.*)/gm,
+      /^(Chapter\s+\d+)[：:\s]*(.*)/gim,
+    ];
+    let matches = [];
+    for (const pat of patterns) {
+      matches = [...text.matchAll(pat)];
+      if (matches.length >= 3) break; // 至少 3 章才采用
+    }
+
+    if (matches.length < 3) {
+      // 没找到章节标记，整篇当作一章，用空行分段落
+      const parts = text.split(/\n{3,}/).filter((p) => p.trim());
+      if (parts.length >= 3) {
+        return parts.map((content, i) => ({
+          index: i + 1,
+          title: `第 ${i + 1} 章`,
+          content: content.trim(),
+        }));
+      }
+      // 实在拆不开就当一章
+      return [{ index: 1, title: "全文", content: text }];
+    }
+
+    const result = [];
+    for (let i = 0; i < matches.length; i++) {
+      const start = matches[i].index;
+      const end = i + 1 < matches.length ? matches[i + 1].index : text.length;
+      const body = text.slice(matches[i].index + matches[i][0].length, end).trim();
+      result.push({
+        index: i + 1,
+        title: (matches[i][2] || matches[i][1]).trim() || matches[i][1],
+        content: body,
+      });
+    }
+    return result;
+  }
+
+  function handleFileUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const text = ev.target.result;
+      const parsed = parseChapters(text);
+      if (parsed.length > 0) {
+        setTitle(file.name.replace(/\.\w+$/, ""));
+        setChapters(parsed);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  }
 
   function loadSample() {
     setTitle(SAMPLE.title);
@@ -50,7 +108,11 @@ export default function NovelInput({ onGenerate, loading }) {
     <form className="novel-input" onSubmit={handleSubmit}>
       <div className="input-header">
         <h2>输入小说</h2>
-        <button type="button" className="btn-sample" onClick={loadSample}>加载示例</button>
+        <div className="input-actions">
+          <input type="file" ref={fileRef} accept=".txt" onChange={handleFileUpload} hidden />
+          <button type="button" className="btn-sample" onClick={() => fileRef.current.click()}>上传 TXT</button>
+          <button type="button" className="btn-sample" onClick={loadSample}>加载示例</button>
+        </div>
       </div>
 
       <label className="field">

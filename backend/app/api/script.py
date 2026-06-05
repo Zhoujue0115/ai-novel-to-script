@@ -4,17 +4,25 @@ from ..logger import get_logger
 from ..models.request import GenerateScriptRequest, ValidateScriptRequest
 from ..models.response import GenerateScriptResponse, ValidationResult
 from ..services.script_generator import generate_script_yaml
+from ..services.batch_processor import batch_generate
 from ..services.yaml_validator import validate_yaml
 
 logger = get_logger(__name__)
 router = APIRouter()
+
+BATCH_THRESHOLD = 12
 
 
 @router.post("/generate", response_model=GenerateScriptResponse)
 def generate_script(req: GenerateScriptRequest):
     logger.info(f"收到生成请求: title='{req.title}', chapters={len(req.chapters)}")
     chapters_dicts = [ch.model_dump() for ch in req.chapters]
-    result = generate_script_yaml(req.title, chapters_dicts, req.style)
+
+    if len(chapters_dicts) > BATCH_THRESHOLD:
+        logger.info(f"章节数 {len(chapters_dicts)} 超过阈值，启用批量处理")
+        result = batch_generate(req.title, chapters_dicts, req.style)
+    else:
+        result = generate_script_yaml(req.title, chapters_dicts, req.style)
 
     if not result["success"]:
         logger.warning(f"生成失败: {result['message']}")
