@@ -19,61 +19,36 @@ export default function NovelInput({ onGenerate, loading }) {
   ]);
   const fileRef = useRef(null);
 
-  function parseChapters(text) {
-    text = text.replace(/\r\n/g, "\n").trim();
-    // 匹配 "第X章" "第X回" "Chapter X" 等
-    const patterns = [
-      /^(第[一二三四五六七八九十百千0-9]+[章回节卷])[：:\s]*(.*)/gm,
-      /^(Chapter\s+\d+)[：:\s]*(.*)/gim,
-    ];
-    let matches = [];
-    for (const pat of patterns) {
-      matches = [...text.matchAll(pat)];
-      if (matches.length >= 3) break; // 至少 3 章才采用
-    }
+  const [uploading, setUploading] = useState(false);
+  const [totalChapters, setTotalChapters] = useState(null);  // 完整章节数据（不在表单中渲染）
+  const [rangeStart, setRangeStart] = useState(1);
+  const [rangeEnd, setRangeEnd] = useState(30);
 
-    if (matches.length < 3) {
-      // 没找到章节标记，整篇当作一章，用空行分段落
-      const parts = text.split(/\n{3,}/).filter((p) => p.trim());
-      if (parts.length >= 3) {
-        return parts.map((content, i) => ({
-          index: i + 1,
-          title: `第 ${i + 1} 章`,
-          content: content.trim(),
-        }));
-      }
-      // 实在拆不开就当一章
-      return [{ index: 1, title: "全文", content: text }];
-    }
-
-    const result = [];
-    for (let i = 0; i < matches.length; i++) {
-      const start = matches[i].index;
-      const end = i + 1 < matches.length ? matches[i + 1].index : text.length;
-      const body = text.slice(matches[i].index + matches[i][0].length, end).trim();
-      result.push({
-        index: i + 1,
-        title: (matches[i][2] || matches[i][1]).trim() || matches[i][1],
-        content: body,
-      });
-    }
-    return result;
-  }
-
-  function handleFileUpload(e) {
+  async function handleFileUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const text = ev.target.result;
-      const parsed = parseChapters(text);
-      if (parsed.length > 0) {
-        setTitle(file.name.replace(/\.\w+$/, ""));
-        setChapters(parsed);
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/script/upload", { method: "POST", body: formData });
+      const data = await res.json();
+      if (data.chapters && data.chapters.length > 0) {
+        setTitle(data.title);
+        setTotalChapters(data.chapters);  // 全部存内存
+        // 表单只显示前 5 章供预览
+        setChapters(data.chapters.slice(0, 5));
+        if (data.chapters.length > 50) {
+          setRangeStart(1);
+          setRangeEnd(Math.min(30, data.chapters.length));
+        }
       }
-    };
-    reader.readAsText(file);
-    e.target.value = "";
+    } catch (err) {
+      console.error("文件上传失败", err);
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
   }
 
   function loadSample() {
@@ -99,10 +74,18 @@ export default function NovelInput({ onGenerate, loading }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    onGenerate({ title, chapters });
+    // 大文件用 totalChapters + 范围过滤
+    let finalChapters = chapters;
+    if (totalChapters && totalChapters.length > 50) {
+      finalChapters = totalChapters.slice(rangeStart - 1, rangeEnd);
+    } else if (totalChapters && totalChapters.length <= 50) {
+      finalChapters = totalChapters;
+    }
+    onGenerate({ title, chapters: finalChapters });
   }
 
   const valid = title.trim() && chapters.length >= 3;
+  const showRange = totalChapters && totalChapters.length > 50;
 
   return (
     <form className="novel-input" onSubmit={handleSubmit}>
@@ -110,7 +93,7 @@ export default function NovelInput({ onGenerate, loading }) {
         <h2>输入小说</h2>
         <div className="input-actions">
           <input type="file" ref={fileRef} accept=".txt" onChange={handleFileUpload} hidden />
-          <button type="button" className="btn-sample" onClick={() => fileRef.current.click()}>上传 TXT</button>
+          <button type="button" className="btn-sample" onClick={() => fileRef.current.click()} disabled={uploading}>{uploading ? "上传中..." : "上传 TXT"}</button>
           <button type="button" className="btn-sample" onClick={loadSample}>加载示例</button>
         </div>
       </div>
@@ -125,10 +108,31 @@ export default function NovelInput({ onGenerate, loading }) {
         <button type="button" onClick={addChapter}>+ 添加章节</button>
       </div>
 
+      {totalChapters && totalChapters.length > 5 && (
+        <div className="chapter-summary">
+          📚 共 <strong>{totalChapters.length}</strong> 章已加载
+          {!showRange && <span>（全部用于生成）</span>}
+        </div>
+      )}
+
+      {showRange && (
+        <div className="range-row">
+          <span>生成范围</span>
+          <div className="range-inputs">
+            第 <input type="number" min={1} max={totalChapters.length} value={rangeStart}
+              onChange={(e) => setRangeStart(Number(e.target.value))} />
+            <span>—</span> 第 <input type="number" min={rangeStart + 1} max={totalChapters.length} value={rangeEnd}
+              onChange={(e) => setRangeEnd(Number(e.target.value))} />
+            章
+          </div>
+          <span className="range-hint">共 {totalChapters.length} 章，每批 8 章批量处理</span>
+        </div>
+      )}
+
       {chapters.map((ch, i) => (
         <div key={i} className="chapter-card">
           <div className="chapter-header">
-            <span>第 {i + 1} 章</span>
+            <span>第 {totalChapters ? ch.index : i + 1} 章（预览）</span>
             {chapters.length > 3 && (
               <button type="button" className="btn-remove" onClick={() => removeChapter(i)}>删除</button>
             )}
@@ -138,7 +142,13 @@ export default function NovelInput({ onGenerate, loading }) {
         </div>
       ))}
 
-      {chapters.length < 3 && <p className="hint">需要至少 3 个章节才能生成</p>}
+      {totalChapters && totalChapters.length > 5 && (
+        <p style={{ fontSize: 12, color: "#999", textAlign: "center" }}>
+          （仅显示前 5 章预览，共 {totalChapters.length} 章）
+        </p>
+      )}
+
+      {!totalChapters && chapters.length < 3 && <p className="hint">需要至少 3 个章节才能生成</p>}
 
       <button type="submit" className="btn-generate" disabled={!valid || loading}>
         {loading && <span className="spinner" />}
