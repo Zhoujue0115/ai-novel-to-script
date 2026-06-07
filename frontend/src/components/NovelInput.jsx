@@ -38,7 +38,7 @@ export default function NovelInput({ onGenerate, loading }) {
         setTotalChapters(data.chapters);  // 全部存内存
         // 表单只显示前 5 章供预览
         setChapters(data.chapters.slice(0, 5));
-        if (data.chapters.length > 50) {
+        if (data.chapters.length > 10) {
           setRangeStart(1);
           setRangeEnd(Math.min(30, data.chapters.length));
         }
@@ -74,18 +74,16 @@ export default function NovelInput({ onGenerate, loading }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    // 大文件用 totalChapters + 范围过滤
+    // 用 totalChapters（完整数据）按范围过滤
     let finalChapters = chapters;
-    if (totalChapters && totalChapters.length > 50) {
+    if (totalChapters) {
       finalChapters = totalChapters.slice(rangeStart - 1, rangeEnd);
-    } else if (totalChapters && totalChapters.length <= 50) {
-      finalChapters = totalChapters;
     }
     onGenerate({ title, chapters: finalChapters });
   }
 
   const valid = title.trim() && chapters.length >= 3;
-  const showRange = totalChapters && totalChapters.length > 50;
+  const showRange = totalChapters && totalChapters.length > 10;
 
   return (
     <form className="novel-input" onSubmit={handleSubmit}>

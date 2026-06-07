@@ -37,7 +37,7 @@ export default function YamlViewer({ yamlText, validation }) {
     <div className="yaml-viewer">
       <div className="yaml-toolbar">
         <div style={{ display: "flex", alignItems: "center" }}>
-          <h3>YAML 输出</h3>
+          <h3>YAML 数据（结构化，可复制编辑）</h3>
           {validation && (
             <span className={`yaml-status ${isValid ? "pass" : "fail"}`}>
               {isValid ? "校验通过" : `${errorCount} 个问题`}
