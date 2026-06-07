@@ -1,12 +1,14 @@
-"""长篇小说批量处理 —— 滑动窗口 + 角色状态注入"""
+"""长篇小说批量处理 —— 滑动窗口 + 角色状态注入 + RAG 检索增强"""
 
 import yaml
 from ..logger import get_logger
 from .script_generator import generate_script_yaml
+from ..rag.vector_store import index_chapters, search_chapters
 
 logger = get_logger(__name__)
-BATCH_SIZE = 8  # 每批处理章节数
-OVERLAP = 2     # 窗口重叠章节数
+BATCH_SIZE = 8   # 每批处理章节数
+OVERLAP = 2      # 窗口重叠章节数
+RAG_THRESHOLD = 20  # 超过此章节数启用 RAG 索引
 
 
 def _extract_character_summary(yaml_text: str) -> str:
@@ -46,6 +48,17 @@ def batch_generate(title: str, chapters: list, style: str = "screenplay") -> dic
     n = len(chapters)
     logger.info(f"批量生成开始: {n} 章, batch_size={BATCH_SIZE}, overlap={OVERLAP}")
 
+    # RAG 索引（超长小说）
+    use_rag = n > RAG_THRESHOLD
+    if use_rag:
+        logger.info(f"章节数 {n} > {RAG_THRESHOLD}，启用 RAG 全文索引")
+        try:
+            col_name = index_chapters(title, chapters)
+            logger.info(f"RAG 索引完成: {col_name}")
+        except Exception as e:
+            logger.warning(f"RAG 索引失败，降级为无检索模式: {e}")
+            use_rag = False
+
     all_yaml_parts = []
     char_context = ""
     setting_context = ""
@@ -58,12 +71,21 @@ def batch_generate(title: str, chapters: list, style: str = "screenplay") -> dic
         batch_idx += 1
         logger.info(f"批次 {batch_idx}: 第 {start+1}-{end} 章 (共 {len(batch_chapters)} 章)")
 
-        # 把前序角色信息注入到这批的第一章内容里（通过修改 prompt 提示）
-        # 这里采用简单策略：独立生成每批，然后合并
+        # RAG 检索：为当前批次检索相关前文
+        rag_context = ""
+        if use_rag and batch_idx > 1:
+            # 用前一批生成的角色上下文作为查询
+            query = f"{title} {char_context}"
+            passages = search_chapters(title, query, top_k=3)
+            if passages:
+                rag_context = "## 相关前文片段\n" + "\n".join(passages)
+                logger.info(f"RAG 注入 {len(passages)} 条前文片段")
+
         result = generate_script_yaml(
             title=f"{title} (第{start+1}-{end}章)",
             chapters=batch_chapters,
             style=style,
+            rag_context=rag_context,
         )
 
         if result["success"]:
