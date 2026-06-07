@@ -7,7 +7,7 @@ from ..rag.vector_store import index_chapters, search_chapters
 
 logger = get_logger(__name__)
 BATCH_SIZE = 8   # 每批处理章节数
-OVERLAP = 2      # 窗口重叠章节数
+OVERLAP = 0      # 不重叠，避免章节重复处理
 RAG_THRESHOLD = 20  # 超过此章节数启用 RAG 索引
 
 
@@ -43,7 +43,7 @@ def _extract_setting_summary(yaml_text: str) -> str:
         return ""
 
 
-def batch_generate(title: str, chapters: list, style: str = "screenplay") -> dict:
+def batch_generate(title: str, chapters: list, style: str = "screenplay", progress_queue=None) -> dict:
     """批量生成：滑动窗口 + 角色状态跨批次传递"""
     n = len(chapters)
     logger.info(f"批量生成开始: {n} 章, batch_size={BATCH_SIZE}, overlap={OVERLAP}")
@@ -63,12 +63,16 @@ def batch_generate(title: str, chapters: list, style: str = "screenplay") -> dic
     char_context = ""
     setting_context = ""
 
+    total_batches = (n + BATCH_SIZE - 1) // BATCH_SIZE
+
     start = 0
     batch_idx = 0
     while start < n:
         end = min(start + BATCH_SIZE, n)
         batch_chapters = chapters[start:end]
         batch_idx += 1
+        if progress_queue:
+            progress_queue.put(f'data: {{"step":"batch","msg":"批次 {batch_idx}/{total_batches}: 第 {start+1}-{end} 章","batch":{batch_idx},"total":{total_batches}}}\\n\\n')
         logger.info(f"批次 {batch_idx}: 第 {start+1}-{end} 章 (共 {len(batch_chapters)} 章)")
 
         # RAG 检索：为当前批次检索相关前文

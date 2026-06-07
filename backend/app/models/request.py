@@ -22,3 +22,7 @@ class GenerateScriptRequest(BaseModel):
 
 class ValidateScriptRequest(BaseModel):
     yaml_text: str = Field(min_length=1, description="待校验的 YAML 文本")
+
+
+class StatsRequest(BaseModel):
+    yaml_text: str = Field(min_length=1, description="待统计的 YAML 文本")

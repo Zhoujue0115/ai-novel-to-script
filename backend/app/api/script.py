@@ -1,20 +1,29 @@
 import os
+import json
+import queue
+import threading
 import tempfile
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, Body
+from fastapi.responses import StreamingResponse
 
 from ..logger import get_logger
-from ..models.request import GenerateScriptRequest, ValidateScriptRequest
+from ..models.request import GenerateScriptRequest, StatsRequest, ValidateScriptRequest
 from ..models.response import GenerateScriptResponse, ValidationResult
 from ..services.script_generator import generate_script_yaml
 from ..services.batch_processor import batch_generate
+import queue
+import threading
+import asyncio
+
 from ..services.file_parser import detect_and_read, split_chapters
 from ..chains.script_chain import generate_with_chain
 from ..services.yaml_validator import validate_yaml
+from ..services.stats_service import compute_stats
 
 logger = get_logger(__name__)
 router = APIRouter()
 
-BATCH_THRESHOLD = 12
+BATCH_THRESHOLD = 8
 CHAIN_THRESHOLD = 6  # ≤6 章用 LangChain 多步链（更高质量），>6 ≤12 用基础生成
 
 
@@ -76,6 +85,65 @@ async def upload_file(file: UploadFile = File(...)):
         }
     finally:
         os.unlink(tmp_path)
+
+
+@router.post("/generate/stream")
+async def generate_stream(req: GenerateScriptRequest):
+    """SSE 流式生成，推送进度事件"""
+    q: queue.Queue = queue.Queue()
+
+    def run():
+        chapters_dicts = [ch.model_dump() for ch in req.chapters]
+        n = len(chapters_dicts)
+        if n > BATCH_THRESHOLD:
+            totalBatches = (n + 7) // 8
+            q.put(f'data: {{"step":"batch","msg":"批次 0/{totalBatches}: 准备中","batch":0,"total":{totalBatches}}}\n\n')
+            result = batch_generate(req.title, chapters_dicts, req.style, progress_queue=q)
+        elif n <= CHAIN_THRESHOLD:
+            q.put("data: {\"step\":\"analyze\",\"msg\":\"正在分析角色与场景...\"}\n\n")
+            try:
+                result = generate_with_chain(req.title, chapters_dicts, req.style)
+                q.put("data: {\"step\":\"generate\",\"msg\":\"正在生成剧本...\"}\n\n")
+            except Exception as e:
+                logger.error(f"链异常,回退: {e}")
+                result = generate_script_yaml(req.title, chapters_dicts, req.style)
+        else:
+            q.put("data: {\"step\":\"generate\",\"msg\":\"正在生成剧本...\"}\n\n")
+            result = generate_script_yaml(req.title, chapters_dicts, req.style)
+
+        if result["success"]:
+            q.put("data: {\"step\":\"validate\",\"msg\":\"正在校验结果...\"}\n\n")
+            validation = validate_yaml(result["yaml_text"])
+            stats = compute_stats(result["yaml_text"])
+            payload = json.dumps({
+                "yaml_text": result["yaml_text"],
+                "validation": validation,
+                "stats": stats,
+            }, ensure_ascii=False)
+            q.put(f"event: done\ndata: {payload}\n\n")
+        else:
+            q.put(f"data: {{\"step\":\"error\",\"msg\":\"{result['message']}\"}}\n\n")
+
+    threading.Thread(target=run, daemon=True).start()
+
+    async def event_gen():
+        while True:
+            try:
+                msg = q.get_nowait()
+                yield msg
+                if msg.startswith("event: done") or '"step":"error"' in msg:
+                    break
+            except queue.Empty:
+                yield ": heartbeat\n\n"
+            await asyncio.sleep(0.3)
+
+    return StreamingResponse(event_gen(), media_type="text/event-stream")
+
+
+@router.post("/stats", response_model=dict)
+async def get_stats(req: StatsRequest):
+    """计算剧本统计指标"""
+    return compute_stats(req.yaml_text)
 
 
 @router.post("/validate", response_model=ValidationResult)

@@ -1,0 +1,54 @@
+.stats-panel {
+  background: #fefdfb;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 12px;
+}
+
+.stats-panel h3 { font-size: 15px; color: #1a1a2e; margin-bottom: 12px; }
+.stats-panel h4 { font-size: 13px; color: #7f8c8d; margin: 14px 0 8px; font-weight: 600; }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.stat-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+}
+
+.stat-value { display: block; font-size: 22px; font-weight: 700; color: #302b63; }
+.stat-label { display: block; font-size: 11px; color: #999; margin-top: 2px; }
+
+.stat-section { margin-top: 4px; }
+
+.bar-chart { display: flex; flex-direction: column; gap: 6px; }
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.bar-label { width: 50px; text-align: right; flex-shrink: 0; color: #555; }
+
+.bar-track { flex: 1; height: 14px; background: #eee; border-radius: 7px; overflow: hidden; }
+
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7aa2f7, #302b63);
+  border-radius: 7px;
+  transition: width 0.5s;
+  min-width: 4px;
+}
+
+.bar-fill.char { background: linear-gradient(90deg, #27ae60, #1e8449); }
+
+.bar-num { width: 36px; text-align: right; font-weight: 600; color: #555; flex-shrink: 0; }
