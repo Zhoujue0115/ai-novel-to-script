@@ -1,10 +1,13 @@
-from fastapi import APIRouter
+import os
+import tempfile
+from fastapi import APIRouter, UploadFile, File
 
 from ..logger import get_logger
 from ..models.request import GenerateScriptRequest, ValidateScriptRequest
 from ..models.response import GenerateScriptResponse, ValidationResult
 from ..services.script_generator import generate_script_yaml
 from ..services.batch_processor import batch_generate
+from ..services.file_parser import detect_and_read, split_chapters
 from ..chains.script_chain import generate_with_chain
 from ..services.yaml_validator import validate_yaml
 
@@ -51,6 +54,28 @@ def generate_script(req: GenerateScriptRequest):
         validation=ValidationResult(**validation),
         message="",
     )
+
+
+@router.post("/upload", response_model=dict)
+async def upload_file(file: UploadFile = File(...)):
+    logger.info(f"收到文件上传: {file.filename}")
+    # 保存临时文件
+    suffix = os.path.splitext(file.filename or ".txt")[1]
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        tmp.write(await file.read())
+        tmp_path = tmp.name
+
+    try:
+        text = detect_and_read(tmp_path)
+        chapters = split_chapters(text)
+        title = os.path.splitext(file.filename)[0] if file.filename else "未命名"
+        return {
+            "title": title,
+            "chapter_count": len(chapters),
+            "chapters": chapters,
+        }
+    finally:
+        os.unlink(tmp_path)
 
 
 @router.post("/validate", response_model=ValidationResult)

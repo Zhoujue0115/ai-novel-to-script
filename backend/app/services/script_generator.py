@@ -27,7 +27,7 @@ def _clean_yaml_output(raw: str) -> str:
     return raw.strip()
 
 
-def generate_script_yaml(title: str, chapters: list, style: str = "screenplay") -> dict:
+def generate_script_yaml(title: str, chapters: list, style: str = "screenplay", rag_context: str = "") -> dict:
     logger.info(f"开始生成剧本: title='{title}', chapters={len(chapters)}, style={style}")
 
     if not title.strip():
@@ -43,7 +43,11 @@ def generate_script_yaml(title: str, chapters: list, style: str = "screenplay") 
         return {"success": False, "yaml_text": "", "message": "未配置 LLM_API_KEY，请检查 .env 文件"}
 
     user_prompt = build_user_prompt(title, chapters, style)
-    logger.info(f"Prompt 构建完成，长度: {len(user_prompt)} 字符")
+    if rag_context:
+        user_prompt = f"{rag_context}\n\n---\n\n{user_prompt}"
+        logger.info(f"Prompt 构建完成（含 RAG 上下文），长度: {len(user_prompt)} 字符")
+    else:
+        logger.info(f"Prompt 构建完成，长度: {len(user_prompt)} 字符")
 
     body = json.dumps({
         "model": LLM_MODEL,

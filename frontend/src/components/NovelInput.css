@@ -122,6 +122,50 @@
 }
 .chapter-card textarea:focus { outline: none; border-color: #302b63; }
 
+.range-row {
+  background: #f8f9fa;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #333;
+}
+
+.range-inputs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.range-inputs input {
+  width: 60px;
+  padding: 4px 6px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.range-hint {
+  font-size: 11px;
+  color: #999;
+}
+
+.chapter-summary {
+  background: #f0f4ff;
+  border: 1px solid #d6e0f8;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #302b63;
+  text-align: center;
+}
+
 .hint { color: #e74c3c; font-size: 13px; margin-top: 8px; }
 
 /* Generate button + spinner */
