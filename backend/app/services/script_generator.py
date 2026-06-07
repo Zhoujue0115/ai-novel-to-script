@@ -18,6 +18,7 @@ LLM_API_KEY = os.getenv("LLM_API_KEY", "")
 LLM_API_BASE = os.getenv("LLM_API_BASE", "https://api.deepseek.com/v1")
 LLM_MODEL = os.getenv("LLM_MODEL", "deepseek-chat")
 TIMEOUT_SECONDS = 120
+MAX_RETRIES = 3
 
 
 def _clean_yaml_output(raw: str) -> str:
@@ -69,27 +70,42 @@ def generate_script_yaml(title: str, chapters: list, style: str = "screenplay", 
         method="POST",
     )
 
-    start = time.time()
-    try:
-        with urllib.request.urlopen(req, timeout=TIMEOUT_SECONDS) as resp:
+    last_error = ""
+    for attempt in range(1, MAX_RETRIES + 1):
+        start = time.time()
+        try:
+            with urllib.request.urlopen(req, timeout=TIMEOUT_SECONDS) as resp:
+                elapsed = time.time() - start
+                data = json.loads(resp.read().decode("utf-8"))
+                logger.info(f"模型返回成功，耗时 {elapsed:.1f}s (尝试 {attempt}/{MAX_RETRIES})")
+                break  # success, exit retry loop
+        except urllib.error.HTTPError as e:
             elapsed = time.time() - start
-            data = json.loads(resp.read().decode("utf-8"))
-            logger.info(f"模型返回成功，耗时 {elapsed:.1f}s")
-    except urllib.error.HTTPError as e:
-        elapsed = time.time() - start
-        logger.error(f"模型 API HTTP {e.code}，耗时 {elapsed:.1f}s")
-        if e.code == 401:
-            return {"success": False, "yaml_text": "", "message": "API Key 无效，请检查 LLM_API_KEY"}
-        if e.code == 429:
-            return {"success": False, "yaml_text": "", "message": "API 请求过于频繁，请稍后重试"}
-        return {"success": False, "yaml_text": "", "message": f"模型 API 错误 ({e.code})"}
-    except TimeoutError:
-        elapsed = time.time() - start
-        logger.error(f"模型调用超时，已等待 {elapsed:.1f}s")
-        return {"success": False, "yaml_text": "", "message": "AI 生成超时，请稍后重试"}
-    except Exception as e:
-        logger.error(f"模型调用异常: {e}")
-        return {"success": False, "yaml_text": "", "message": f"AI 生成失败: {str(e)}"}
+            logger.error(f"模型 API HTTP {e.code}，耗时 {elapsed:.1f}s")
+            if e.code == 401:
+                return {"success": False, "yaml_text": "", "message": "API Key 无效，请检查 LLM_API_KEY"}
+            if e.code == 429:
+                last_error = "API 请求过于频繁，请稍后重试"
+                if attempt < MAX_RETRIES:
+                    time.sleep(3 * attempt)
+                    continue
+                return {"success": False, "yaml_text": "", "message": last_error}
+            last_error = f"模型 API 错误 ({e.code})"
+        except TimeoutError:
+            elapsed = time.time() - start
+            logger.error(f"模型调用超时，已等待 {elapsed:.1f}s (尝试 {attempt}/{MAX_RETRIES})")
+            last_error = "AI 生成超时，请稍后重试"
+        except Exception as e:
+            logger.error(f"模型调用异常 (尝试 {attempt}/{MAX_RETRIES}): {e}")
+            last_error = f"AI 生成失败: {str(e)}"
+
+        if attempt < MAX_RETRIES:
+            wait = 2 * attempt
+            logger.info(f"等待 {wait}s 后重试...")
+            time.sleep(wait)
+    else:
+        # All retries exhausted
+        return {"success": False, "yaml_text": "", "message": last_error}
 
     content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
 
