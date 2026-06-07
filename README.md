@@ -2,7 +2,7 @@
 
 > 将小说章节自动转换为结构化 YAML 格式剧本 —— 面向小说作者和内容创作者的 AI 辅助改编工具。
 
-[![Demo 视频](docs/screenshot.png)](https://www.bilibili.com/video/你的BV号)
+[![Demo 视频](docs/screenshot.png)](https://www.bilibili.com/video/BV1mcEh6mENd)
 
 > 📺 点击上图观看 Demo 演示视频
 
