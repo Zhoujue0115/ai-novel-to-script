@@ -130,14 +130,16 @@ ValidationResult
 清洗章节文本
 生成章节摘要，或交给 AI 处理
 AI 生成模块
-负责调用大模型。
+负责调用大模型（双模式）。
 
 功能：
 
-构建 Prompt
-调用模型 API
-获取 YAML 文本结果
-处理模型异常
+基础模式（urllib）：≤12 章，单次 Prompt 生成
+LangChain 多步链（chains/script_chain）：≤6 章，三步生成
+  Step 1 — 角色与场景分析
+  Step 2 — 基于分析结果生成 YAML
+  Step 3 — 自检修正（严重异常时触发）
+
 YAML 校验模块
 负责检查生成结果。
 
@@ -327,6 +329,13 @@ beats 的 type 只能是 narration、dialogue、action、inner_monologue、stage
 - UI 美化（渐变/阴影/动画/响应式）
 - 校验状态实时显示
 - 样例输入输出（samples/）
+- TXT 上传自动分章 + 长篇小说批量处理
+
+### P3（第四阶段）🔄 进行中
+
+- LangChain 多步链升级（ChatDeepSeek + 角色分析 + 场景拆分 + 自检修正）
+- RAG 全文索引（ChromaDB + 向量检索）
+- Agent 分集规划与逐集生成
 
 ## 9. 后续扩展方向
 

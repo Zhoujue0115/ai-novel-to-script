@@ -5,12 +5,14 @@ from ..models.request import GenerateScriptRequest, ValidateScriptRequest
 from ..models.response import GenerateScriptResponse, ValidationResult
 from ..services.script_generator import generate_script_yaml
 from ..services.batch_processor import batch_generate
+from ..chains.script_chain import generate_with_chain
 from ..services.yaml_validator import validate_yaml
 
 logger = get_logger(__name__)
 router = APIRouter()
 
 BATCH_THRESHOLD = 12
+CHAIN_THRESHOLD = 6  # ≤6 章用 LangChain 多步链（更高质量），>6 ≤12 用基础生成
 
 
 @router.post("/generate", response_model=GenerateScriptResponse)
@@ -21,6 +23,13 @@ def generate_script(req: GenerateScriptRequest):
     if len(chapters_dicts) > BATCH_THRESHOLD:
         logger.info(f"章节数 {len(chapters_dicts)} 超过阈值，启用批量处理")
         result = batch_generate(req.title, chapters_dicts, req.style)
+    elif len(chapters_dicts) <= CHAIN_THRESHOLD:
+        logger.info(f"章节数 {len(chapters_dicts)}，使用 LangChain 多步链")
+        try:
+            result = generate_with_chain(req.title, chapters_dicts, req.style)
+        except Exception as e:
+            logger.error(f"LangChain 链异常，回退基础生成: {e}")
+            result = generate_script_yaml(req.title, chapters_dicts, req.style)
     else:
         result = generate_script_yaml(req.title, chapters_dicts, req.style)
 
