@@ -163,27 +163,61 @@ def _merge_yaml_parts(title: str, parts: list, all_chapters: list, style: str) -
             ]
         final_scenes.append(scene)
 
+    # 收集所有分部的 adaptation_notes
+    all_omitted = []
+    all_suggestions = []
+    genre = ""
+    era = ""
+    for part in parts:
+        try:
+            d = yaml.safe_load(part)
+            if d:
+                notes = d.get("adaptation_notes", {})
+                all_omitted.extend(notes.get("omitted_plots", []))
+                all_suggestions.extend(notes.get("suggestions", []))
+                genre = genre or d.get("metadata", {}).get("genre", "")
+                era = era or d.get("settings", {}).get("era", "")
+        except Exception:
+            pass
+
     merged = {
         "title": title,
         "metadata": {
             "schema_version": "1.0",
+            "genre": genre or "未分类",
             "style": style,
             "language": "zh-CN",
             "generated_by": "AI Novel to Script (batch)",
         },
         "source_chapters": source_summaries or [
-            {"index": ch["index"], "title": ch["title"]}
+            {"index": ch["index"], "title": ch["title"], "summary": ""}
             for ch in all_chapters
         ],
         "characters": final_chars,
         "settings": {
+            "era": era or "未指定",
             "locations": list(all_locations.values()),
         },
         "scenes": final_scenes,
         "adaptation_notes": {
+            "omitted_plots": all_omitted[:5] or [],
             "merged_scenes": [f"跨批次合并，共 {len(parts)} 个批次"],
-            "suggestions": [],
+            "suggestions": all_suggestions[:5] or [],
         },
     }
+
+    # 修复每个场景和 beat 的必填字段
+    for scene in merged["scenes"]:
+        scene.setdefault("chapter_refs", [1])
+        scene.setdefault("location", "未指定")
+        scene.setdefault("time", "")
+        scene.setdefault("summary", "")
+        scene.setdefault("characters_in_scene", [])
+        for beat in scene.get("beats", []):
+            bt = beat.get("type", "narration")
+            if bt not in ("narration", "dialogue", "action", "inner_monologue", "stage_direction"):
+                beat["type"] = "narration"
+            if bt in ("dialogue", "action", "inner_monologue") and "character" not in beat:
+                beat["character"] = scene["characters_in_scene"][0] if scene["characters_in_scene"] else "c1"
 
     return yaml.dump(merged, allow_unicode=True, sort_keys=False)

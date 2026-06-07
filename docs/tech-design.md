@@ -331,11 +331,11 @@ beats 的 type 只能是 narration、dialogue、action、inner_monologue、stage
 - 样例输入输出（samples/）
 - TXT 上传自动分章 + 长篇小说批量处理
 
-### P3（第四阶段）🔄 进行中
+### P3（第四阶段）✅ 已完成
 
 - LangChain 多步链升级（ChatDeepSeek + 角色分析 + 场景拆分 + 自检修正）
 - RAG 全文索引（ChromaDB + 向量检索）
-- Agent 分集规划与逐集生成
+
 
 ## 9. 后续扩展方向
 

@@ -21,14 +21,22 @@
 ```mermaid
 flowchart TD
     A[封面 Cover] -->|开始使用| B[NovelInput 输入区]
-    B -->|POST /api/script/generate| C[FastAPI 后端]
-    C --> D[Pydantic 输入校验]
-    D --> E[Prompt Builder]
-    E --> F[DeepSeek API]
-    F --> G[YAML Validator]
-    G --> H[返回 YAML + 校验结果]
-    H --> I[YamlViewer 展示]
-    H --> J[ScriptPreview 预览]
+    B -->|上传 TXT / 加载示例| C[章节范围选择]
+    C -->|POST /api/script/generate| D[FastAPI 后端]
+    D --> E[Pydantic 输入校验]
+    E --> F{章节数}
+    F -->|≤6章| G[LangChain 三步链]
+    F -->|7-20章| H[基础 Prompt 生成]
+    F -->|>20章| I[批量滑动窗口 + RAG]
+    G --> J[YAML Validator 校验]
+    H --> J
+    I --> K[批量合并 + 修复]
+    K --> J
+    J --> L[SSE 流式推送进度]
+    L --> M[返回 YAML + 校验 + 统计]
+    M --> N[YamlViewer 展示]
+    M --> O[ScriptPreview 预览]
+    M --> P[StatsPanel 统计]
 ```
 
 ## 项目结构
@@ -71,7 +79,10 @@ ai-novel-to-script/
 | P0 | FastAPI 骨架 + /health + 校验 | ✅ |
 | P1 | DeepSeek API + Prompt + YAML生成 | ✅ |
 | P2 | 前端三栏 + 预览 + 导出 | ✅ |
-| 增强 | 日志 + 异常处理 + 单元测试 + UI美化 | ✅ |
+| P2 | TXT上传自动分章 + 长文批量处理 | ✅ |
+| P3 | LangChain 多步链 + RAG 检索 | ✅ |
+| P3 | SSE 流式推送 + 批量进度条 + 剧本统计 | ✅ |
+| P3 | 多页面导航 + 章节范围选择 + API 重试 | ✅ |
 
 ## 前置依赖
 
