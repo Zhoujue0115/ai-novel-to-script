@@ -29,6 +29,7 @@ export default function YamlViewer({ yamlText, validation }) {
     );
   }
 
+  const [showErrors, setShowErrors] = useState(false);
   const lines = yamlText.split("\n");
   const isValid = validation?.valid;
   const errorCount = validation?.errors?.length || 0;
@@ -36,11 +37,16 @@ export default function YamlViewer({ yamlText, validation }) {
   return (
     <div className="yaml-viewer">
       <div className="yaml-toolbar">
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <h3>YAML 数据（结构化，可复制编辑）</h3>
           {validation && (
-            <span className={`yaml-status ${isValid ? "pass" : "fail"}`}>
+            <span
+              className={`yaml-status ${isValid ? "pass" : "fail"}`}
+              onClick={() => !isValid && setShowErrors(!showErrors)}
+              style={!isValid ? { cursor: "pointer" } : {}}
+            >
               {isValid ? "校验通过" : `${errorCount} 个问题`}
+              {!isValid && <span style={{ marginLeft: 4, fontSize: 10 }}>{showErrors ? "▲" : "▼"}</span>}
             </span>
           )}
         </div>
@@ -57,6 +63,16 @@ export default function YamlViewer({ yamlText, validation }) {
         </div>
         <pre className="yaml-content"><code>{yamlText}</code></pre>
       </div>
+      {showErrors && errorCount > 0 && (
+        <div className="yaml-errors">
+          <h4>校验详情</h4>
+          <ul>
+            {validation.errors.map((e, i) => (
+              <li key={i}>{e}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
