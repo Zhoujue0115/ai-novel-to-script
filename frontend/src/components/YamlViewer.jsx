@@ -3,6 +3,7 @@ import "./YamlViewer.css";
 
 export default function YamlViewer({ yamlText, validation }) {
   const [copied, setCopied] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
 
   function handleCopy() {
     navigator.clipboard.writeText(yamlText);
@@ -29,7 +30,6 @@ export default function YamlViewer({ yamlText, validation }) {
     );
   }
 
-  const [showErrors, setShowErrors] = useState(false);
   const lines = yamlText.split("\n");
   const isValid = validation?.valid;
   const errorCount = validation?.errors?.length || 0;
