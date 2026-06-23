@@ -334,7 +334,12 @@ beats 的 type 只能是 narration、dialogue、action、inner_monologue、stage
 ### P3（第四阶段）✅ 已完成
 
 - LangChain 多步链升级（ChatDeepSeek + 角色分析 + 场景拆分 + 自检修正）
-- RAG 全文索引（ChromaDB + 向量检索）
+- RAG 全文索引（ChromaDB + 向量检索 + embedding 模型懒加载）
+- SSE 流式推送（生成步骤实时推送 + 批量进度条）
+- 剧本统计分析（场景数/对白占比/角色台词排行）
+- 多页面导航（剧本生成 | 统计分析 | 使用说明）
+- API 自动重试（单批失败 3 次重试 + 请求对象重建）
+- YAML 自动修复（缺失字段补全 + beat 类型修正）
 
 
 ## 9. 后续扩展方向
@@ -344,11 +349,9 @@ beats 的 type 只能是 narration、dialogue、action、inner_monologue、stage
 - 局部场景重新生成（单场景改写）
 - 多版本对比（同一小说不同改编策略对比）
 - 角色关系图可视化
-- 流式输出（SSE，生成时逐字刷新）
 
 ### 中长期
 
-- **RAG 增强**：超长篇小说（50+ 章）引入向量检索，生成前检索相关情节片段注入 prompt
 - **Agent 辅助分集**：对百万字级作品，先由 Agent 分析全书结构、规划分集大纲，再逐集调用生成模块
 - **JSON Schema 严格校验**：用 JSON Schema 替代手工校验，更严格的字段类型和枚举约束
 - 多模型支持（Claude / GPT-5.4 / 本地模型）
