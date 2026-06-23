@@ -57,7 +57,7 @@ def validate_yaml(yaml_text: str) -> dict:
                     elif field == "scene_id":
                         scene[field] = f"s{i+1}"
                     else:
-                        scene[field] = ""  # title, location 等用空串补
+                        scene[field] = ""
             if "beats" in scene and isinstance(scene["beats"], list):
                 for j, beat in enumerate(scene["beats"]):
                     if "type" not in beat:
