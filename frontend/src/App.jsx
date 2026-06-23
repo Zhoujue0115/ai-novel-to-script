@@ -6,6 +6,31 @@ import ScriptPreview from "./components/ScriptPreview";
 import ProgressBar from "./components/ProgressBar";
 import StatsPanel from "./components/StatsPanel";
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: 40, textAlign: "center" }}>
+          <h2>页面出错了</h2>
+          <p style={{ color: "#999" }}>{this.state.error?.message}</p>
+          <button onClick={() => { this.setState({ hasError: false }); window.location.reload(); }}
+            style={{ marginTop: 16, padding: "8px 24px", cursor: "pointer" }}>
+            刷新页面
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function App() {
   const [showCover, setShowCover] = useState(true);
   const [yamlText, setYamlText] = useState("");
@@ -144,6 +169,7 @@ export default function App() {
   if (showCover) return <Cover onEnter={() => setShowCover(false)} />;
 
   return (
+    <ErrorBoundary>
     <div className="app">
       <nav className="nav-bar">
         <div className="nav-brand">AI 小说转剧本</div>
@@ -203,5 +229,6 @@ export default function App() {
 
       {error && <div className="error-toast">{error}</div>}
     </div>
+    </ErrorBoundary>
   );
 }
