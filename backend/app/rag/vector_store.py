@@ -3,8 +3,11 @@
 import os
 import chromadb
 from chromadb.config import Settings
-from sentence_transformers import SentenceTransformer
 from ..logger import get_logger
+
+# 懒加载，只在需要时导入
+SentenceTransformer = None
+_import_attempted = False
 
 logger = get_logger(__name__)
 
@@ -18,14 +21,27 @@ _client = None
 
 
 def _get_model():
-    global _model
+    global _model, SentenceTransformer, _import_attempted
     if _model is None:
+        if not _import_attempted:
+            _import_attempted = True
+            try:
+                import os as _os
+                _os.environ.setdefault("HF_HUB_DOWNLOAD_TIMEOUT", "3")
+                from sentence_transformers import SentenceTransformer as ST
+                SentenceTransformer = ST
+            except Exception as e:
+                logger.warning(f"sentence-transformers 导入失败: {e}")
+                _model = False
+                return None
+        if SentenceTransformer is None or _model is False:
+            return None
         logger.info(f"加载 embedding 模型: {EMBED_MODEL_NAME}")
         try:
             _model = SentenceTransformer(EMBED_MODEL_NAME)
         except Exception as e:
-            logger.warning(f"Embedding 模型加载失败（网络问题），RAG 将不可用: {e}")
-            _model = False  # 标记为失败，不再重试
+            logger.warning(f"Embedding 模型加载失败: {e}")
+            _model = False
     return _model if _model is not False else None
 
 
