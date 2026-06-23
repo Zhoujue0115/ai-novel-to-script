@@ -21,8 +21,12 @@ def _get_model():
     global _model
     if _model is None:
         logger.info(f"加载 embedding 模型: {EMBED_MODEL_NAME}")
-        _model = SentenceTransformer(EMBED_MODEL_NAME)
-    return _model
+        try:
+            _model = SentenceTransformer(EMBED_MODEL_NAME)
+        except Exception as e:
+            logger.warning(f"Embedding 模型加载失败（网络问题），RAG 将不可用: {e}")
+            _model = False  # 标记为失败，不再重试
+    return _model if _model is not False else None
 
 
 def _get_client():
@@ -35,8 +39,11 @@ def _get_client():
 
 def index_chapters(title: str, chapters: list, force_rebuild: bool = False) -> str:
     """将小说章节向量化存入 ChromaDB，返回 collection 名称"""
-    client = _get_client()
     model = _get_model()
+    if model is None:
+        logger.warning("Embedding 模型不可用，跳过 RAG 索引")
+        return ""
+    client = _get_client()
 
     # 用标题生成唯一 collection 名
     safe_name = "".join(c for c in title if c.isalnum() or c in "_ -")[:40].strip()
@@ -89,8 +96,10 @@ def index_chapters(title: str, chapters: list, force_rebuild: bool = False) -> s
 
 def search_chapters(title: str, query: str, top_k: int = 5) -> list[str]:
     """根据查询检索相关小说段落"""
-    client = _get_client()
     model = _get_model()
+    if model is None:
+        return []
+    client = _get_client()
 
     safe_name = "".join(c for c in title if c.isalnum() or c in "_ -")[:40].strip()
     col_name = f"novel_{safe_name}" if safe_name else COLLECTION_NAME
