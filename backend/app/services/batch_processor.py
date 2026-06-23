@@ -93,7 +93,7 @@ def batch_generate(title: str, chapters: list, style: str = "screenplay", progre
         )
 
         if result["success"]:
-            all_yaml_parts.append(result["yaml_text"])
+            all_yaml_parts.append((result["yaml_text"], start))  # 记录批次起始章节偏移
             char_context = _extract_character_summary(result["yaml_text"])
             setting_context = _extract_setting_summary(result["yaml_text"])
             if char_context:
@@ -120,11 +120,16 @@ def _merge_yaml_parts(title: str, parts: list, all_chapters: list, style: str) -
     all_locations = {}
     source_summaries = []
 
-    for part in parts:
+    for part, offset in parts:
         try:
             data = yaml.safe_load(part)
         except Exception:
             continue
+        # 重映射 chapter_refs 为绝对章节号（offset 是这批的起始章节索引）
+        for scene in data.get("scenes", []):
+            refs = scene.get("chapter_refs", [])
+            if refs:
+                scene["chapter_refs"] = [r + offset for r in refs]
         if not data:
             continue
 
