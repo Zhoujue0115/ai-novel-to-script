@@ -27,7 +27,7 @@ def _get_model():
             _import_attempted = True
             try:
                 import os as _os
-                _os.environ.setdefault("HF_HUB_DOWNLOAD_TIMEOUT", "3")
+                _os.environ["HF_HUB_OFFLINE"] = "1"  # 强制使用本地缓存
                 from sentence_transformers import SentenceTransformer as ST
                 SentenceTransformer = ST
             except Exception as e:
