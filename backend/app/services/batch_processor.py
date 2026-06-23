@@ -85,21 +85,32 @@ def batch_generate(title: str, chapters: list, style: str = "screenplay", progre
                 rag_context = "## 相关前文片段\n" + "\n".join(passages)
                 logger.info(f"RAG 注入 {len(passages)} 条前文片段")
 
-        result = generate_script_yaml(
-            title=f"{title} (第{start+1}-{end}章)",
-            chapters=batch_chapters,
-            style=style,
-            rag_context=rag_context,
-        )
+        # 每批最多重试 3 次
+        batch_retries = 0
+        result = None
+        while batch_retries < 3:
+            result = generate_script_yaml(
+                title=f"{title} (第{start+1}-{end}章)",
+                chapters=batch_chapters,
+                style=style,
+                rag_context=rag_context,
+            )
+            if result["success"]:
+                break
+            batch_retries += 1
+            if batch_retries < 3:
+                logger.warning(f"批次 {batch_idx} 失败，第 {batch_retries} 次重试...")
+                import time
+                time.sleep(3 * batch_retries)
 
-        if result["success"]:
-            all_yaml_parts.append((result["yaml_text"], start))  # 记录批次起始章节偏移
+        if result and result["success"]:
+            all_yaml_parts.append((result["yaml_text"], start))
             char_context = _extract_character_summary(result["yaml_text"])
             setting_context = _extract_setting_summary(result["yaml_text"])
             if char_context:
                 logger.info(f"批次 {batch_idx} 角色摘要已提取，将注入下一批")
         else:
-            logger.warning(f"批次 {batch_idx} 生成失败: {result['message']}")
+            logger.warning(f"批次 {batch_idx} 最终失败: {result.get('message', '') if result else '无结果'}")
 
         # 滑动窗口：start 前进 BATCH_SIZE - OVERLAP
         start += BATCH_SIZE - OVERLAP
