@@ -28,8 +28,8 @@ flowchart TD
     D --> E[Pydantic 输入校验]
     E --> F{章节数}
     F -->|≤6章| G[LangChain 三步链]
-    F -->|7-20章| H[基础 Prompt 生成]
-    F -->|>20章| I[批量滑动窗口 + RAG]
+    F -->|7-15章| H[基础 Prompt 生成]
+    F -->|>15章| I[批量滑动窗口 + RAG]
     G --> J[YAML Validator 校验]
     H --> J
     I --> K[批量合并 + 修复]

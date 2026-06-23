@@ -23,8 +23,8 @@ from ..services.stats_service import compute_stats
 logger = get_logger(__name__)
 router = APIRouter()
 
-BATCH_THRESHOLD = 8
-CHAIN_THRESHOLD = 6  # ≤6 章用 LangChain 多步链（更高质量），>6 ≤12 用基础生成
+BATCH_THRESHOLD = 15
+CHAIN_THRESHOLD = 6  # ≤6 章用 LangChain 多步链，7-15章基础生成，>15章批量
 
 
 @router.post("/generate", response_model=GenerateScriptResponse)

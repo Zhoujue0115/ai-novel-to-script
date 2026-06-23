@@ -104,7 +104,7 @@ export default function App() {
 
   async function handleGenerate({ title, chapters }) {
     const n = chapters.length;
-    if (n > 12) {
+    if (n > 15) {
       // 长文用 SSE
       return handleGenerateStream({ title, chapters });
     }
@@ -185,7 +185,7 @@ export default function App() {
             <div className="help-card">
               <span className="help-icon">🤖</span>
               <h4>AI 生成</h4>
-              <p>点击「生成剧本」后，系统自动选择最优策略：≤6 章用 LangChain 三步链，7-20 章用基础生成，&gt;20 章启用批量+RAG 增强。</p>
+              <p>点击「生成剧本」后，系统自动选择最优策略：≤6 章用 LangChain 三步链，7-15 章基础生成，&gt;15 章滑动窗口批量处理（&gt;25 章额外启用 RAG 检索增强）。</p>
             </div>
             <div className="help-card">
               <span className="help-icon">📊</span>
