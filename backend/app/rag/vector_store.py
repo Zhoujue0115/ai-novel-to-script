@@ -38,7 +38,7 @@ def _get_model():
             return None
         logger.info(f"加载 embedding 模型: {EMBED_MODEL_NAME}")
         try:
-            _model = SentenceTransformer(EMBED_MODEL_NAME)
+            _model = SentenceTransformer(EMBED_MODEL_NAME, local_files_only=True)
         except Exception as e:
             logger.warning(f"Embedding 模型加载失败: {e}")
             _model = False
