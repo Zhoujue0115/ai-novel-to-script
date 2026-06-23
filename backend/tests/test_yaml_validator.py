@@ -47,8 +47,8 @@ def test_not_yaml():
 
 def test_missing_top_fields():
     result = validate_yaml("title: test")
-    assert result["valid"] is False
-    assert any("source_chapters" in e for e in result["errors"])
+    # 缺少的字段会被自动补全
+    assert result["valid"] is True
 
 
 def test_missing_scene_field():
@@ -84,8 +84,7 @@ scenes:
       - type: "singing"
         content: "唱了一段歌"
 """)
-    assert result["valid"] is False
-    assert any("type 值无效" in e for e in result["errors"])
+    assert result["valid"] is True  # beat type auto-fixed to narration
 
 
 def test_dialogue_missing_character():
@@ -104,5 +103,4 @@ scenes:
       - type: "dialogue"
         content: "缺少角色字段的对白"
 """)
-    assert result["valid"] is False
-    assert any("缺少 character 字段" in e for e in result["errors"])
+    assert result["valid"] is True  # character auto-filled from scene

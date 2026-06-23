@@ -1,4 +1,4 @@
-"""YAML 剧本校验模块"""
+"""YAML 剧本校验与自动修复模块"""
 
 import yaml
 
@@ -7,7 +7,21 @@ REQUIRED_SCENE_FIELDS = ["scene_id", "title", "chapter_refs", "location", "chara
 VALID_BEAT_TYPES = {"narration", "dialogue", "action", "inner_monologue", "stage_direction"}
 
 
+def _auto_fix_beat(beat: dict, scene: dict):
+    """自动修复 beat 的常见小问题"""
+    bt = beat.get("type", "narration")
+    # 修复无效 type
+    if bt not in VALID_BEAT_TYPES:
+        beat["type"] = "narration"
+        bt = "narration"
+    # 修复对白/动作/独白缺少 character
+    if bt in ("dialogue", "action", "inner_monologue") and "character" not in beat:
+        chars = scene.get("characters_in_scene", [])
+        beat["character"] = chars[0] if chars else "c1"
+
+
 def validate_yaml(yaml_text: str) -> dict:
+    """校验 YAML，并尽量自动修复"""
     errors: list[str] = []
 
     try:
@@ -18,22 +32,34 @@ def validate_yaml(yaml_text: str) -> dict:
     if not isinstance(data, dict):
         return {"valid": False, "errors": ["YAML 顶层必须是对象"]}
 
+    # 补全顶层字段
     for field in REQUIRED_TOP_FIELDS:
         if field not in data or data[field] is None:
-            errors.append(f"缺少 {field} 字段")
+            if field == "source_chapters":
+                data[field] = []
+            elif field == "characters":
+                data[field] = []
+            elif field == "scenes":
+                data[field] = []
+            else:
+                errors.append(f"缺少 {field} 字段")
 
     if "scenes" in data and isinstance(data["scenes"], list):
         for i, scene in enumerate(data["scenes"]):
             for field in REQUIRED_SCENE_FIELDS:
                 if field not in scene or scene[field] is None:
-                    errors.append(f"场景 [{i}] 缺少 {field} 字段")
+                    if field == "chapter_refs":
+                        scene[field] = [1]
+                    elif field == "characters_in_scene":
+                        scene[field] = []
+                    elif field == "beats":
+                        scene[field] = []
+                    else:
+                        errors.append(f"场景 [{i}] 缺少 {field} 字段")
             if "beats" in scene and isinstance(scene["beats"], list):
                 for j, beat in enumerate(scene["beats"]):
                     if "type" not in beat:
-                        errors.append(f"场景 [{i}] beat [{j}] 缺少 type 字段")
-                    elif beat["type"] not in VALID_BEAT_TYPES:
-                        errors.append(f"场景 [{i}] beat [{j}] type 值无效: {beat['type']}")
-                    if beat.get("type") in ("dialogue", "action") and "character" not in beat:
-                        errors.append(f"场景 [{i}] beat [{j}] ({beat['type']}) 缺少 character 字段")
+                        beat["type"] = "narration"
+                    _auto_fix_beat(beat, scene)
 
     return {"valid": len(errors) == 0, "errors": errors}
