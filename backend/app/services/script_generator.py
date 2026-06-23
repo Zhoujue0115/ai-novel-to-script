@@ -50,28 +50,29 @@ def generate_script_yaml(title: str, chapters: list, style: str = "screenplay", 
     else:
         logger.info(f"Prompt 构建完成，长度: {len(user_prompt)} 字符")
 
-    body = json.dumps({
-        "model": LLM_MODEL,
-        "messages": [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt},
-        ],
-        "temperature": 0.7,
-        "max_tokens": 8192,
-    }).encode("utf-8")
-
-    req = urllib.request.Request(
-        f"{LLM_API_BASE}/chat/completions",
-        data=body,
-        headers={
-            "Authorization": f"Bearer {LLM_API_KEY}",
-            "Content-Type": "application/json",
-        },
-        method="POST",
-    )
-
     last_error = ""
     for attempt in range(1, MAX_RETRIES + 1):
+        # 每次重试重建请求对象（data 只能发一次）
+        body = json.dumps({
+            "model": LLM_MODEL,
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": user_prompt},
+            ],
+            "temperature": 0.7,
+            "max_tokens": 8192,
+        }).encode("utf-8")
+
+        req = urllib.request.Request(
+            f"{LLM_API_BASE}/chat/completions",
+            data=body,
+            headers={
+                "Authorization": f"Bearer {LLM_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            method="POST",
+        )
+
         start = time.time()
         try:
             with urllib.request.urlopen(req, timeout=TIMEOUT_SECONDS) as resp:
