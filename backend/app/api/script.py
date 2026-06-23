@@ -59,8 +59,8 @@ def generate_script(req: GenerateScriptRequest):
     logger.info(f"校验结果: valid={validation['valid']}, errors={len(validation['errors'])}")
     return GenerateScriptResponse(
         success=True,
-        yaml_text=result["yaml_text"],
-        validation=ValidationResult(**validation),
+        yaml_text=validation.get("fixed_yaml", result["yaml_text"]),
+        validation=ValidationResult(valid=validation["valid"], errors=validation["errors"]),
         message="",
     )
 
@@ -114,6 +114,7 @@ async def generate_stream(req: GenerateScriptRequest):
         if result["success"]:
             q.put("data: {\"step\":\"validate\",\"msg\":\"正在校验结果...\"}\n\n")
             validation = validate_yaml(result["yaml_text"])
+            result["yaml_text"] = validation.get("fixed_yaml", result["yaml_text"])
             stats = compute_stats(result["yaml_text"])
             payload = json.dumps({
                 "yaml_text": result["yaml_text"],

@@ -54,12 +54,15 @@ def validate_yaml(yaml_text: str) -> dict:
                         scene[field] = []
                     elif field == "beats":
                         scene[field] = []
+                    elif field == "scene_id":
+                        scene[field] = f"s{i+1}"
                     else:
-                        errors.append(f"场景 [{i}] 缺少 {field} 字段")
+                        scene[field] = ""  # title, location 等用空串补
             if "beats" in scene and isinstance(scene["beats"], list):
                 for j, beat in enumerate(scene["beats"]):
                     if "type" not in beat:
                         beat["type"] = "narration"
                     _auto_fix_beat(beat, scene)
 
-    return {"valid": len(errors) == 0, "errors": errors}
+    fixed_text = yaml.dump(data, allow_unicode=True, sort_keys=False)
+    return {"valid": len(errors) == 0, "errors": errors, "fixed_yaml": fixed_text}
