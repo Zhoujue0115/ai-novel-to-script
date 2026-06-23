@@ -166,10 +166,11 @@ export default function App() {
     }
   }
 
-  if (showCover) return <Cover onEnter={() => setShowCover(false)} />;
-
   return (
     <ErrorBoundary>
+    {showCover ? (
+      <Cover onEnter={() => setShowCover(false)} />
+    ) : (
     <div className="app">
       <nav className="nav-bar">
         <div className="nav-brand">AI 小说转剧本</div>
@@ -229,6 +230,7 @@ export default function App() {
 
       {error && <div className="error-toast">{error}</div>}
     </div>
+    )}
     </ErrorBoundary>
   );
 }
