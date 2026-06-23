@@ -23,8 +23,17 @@ MAX_RETRIES = 3
 
 def _clean_yaml_output(raw: str) -> str:
     raw = raw.strip()
+    # 1. 处理带换行的 markdown 代码块： ```yaml\n...\n```
+    m = re.search(r"```ya?ml\s*\n(.*?)\n\s*```", raw, re.DOTALL)
+    if m:
+        return m.group(1).strip()
+    # 2. 处理开头/结尾的 fence
     raw = re.sub(r"^```ya?ml\s*", "", raw)
     raw = re.sub(r"\s*```$", "", raw)
+    # 3. 尝试找 ``` 包围的代码块
+    m = re.search(r"```\s*\n(.*?)\n\s*```", raw, re.DOTALL)
+    if m:
+        return m.group(1).strip()
     return raw.strip()
 
 
